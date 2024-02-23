@@ -1,5 +1,6 @@
 ﻿Imports System.Diagnostics.Eventing
 Imports System.IO
+Imports Guna.UI2.WinForms
 Imports MySql.Data.MySqlClient
 
 Public Class Form3
@@ -77,7 +78,7 @@ Public Class Form3
 
             conn.Open()
 
-            Dim query As String = "SELECT UserFriends FROM user_tbl WHERE UID = @UID"
+            Dim query As String = "SELECT * FROM user_tbl WHERE UID = @UID"
 
             For Each xfriend In FriendListNum
 
@@ -92,9 +93,26 @@ Public Class Form3
                         Dim pnl As New Panel()
                         pnl.Width = 345
                         pnl.Height = 80
-                        pnl.BackColor = Color.Red
+                        pnl.BorderStyle = BorderStyle.FixedSingle
+                        pnl.BackColor = Guna2Panel4.FillColor
                         pnl.Tag = xfriend
                         FlowLayoutPanel1.Controls.Add(pnl)
+
+                        Dim dp As New Guna2CirclePictureBox()
+                        dp.Width = 60
+                        dp.Height = 60
+                        dp.SizeMode = PictureBoxSizeMode.StretchImage
+                        dp.Image = globalFunctions.ToImage(DirectCast(Reader("ImageData"), Byte()))
+                        dp.Location = New Point(13, 9)
+                        pnl.Controls.Add(dp)
+
+                        Dim name As New Label()
+                        name.Text = Reader("FirstName").ToString() + " " + Reader("LastName").ToString()
+                        name.AutoSize = True
+                        name.Font = New Font("Arial Rounded MT Bold", 18, FontStyle.Regular)
+                        name.ForeColor = Color.White
+                        name.Location = New Point(80, 21)
+                        pnl.Controls.Add(name)
 
                     End While
 
@@ -113,11 +131,27 @@ Public Class Form3
 
     End Sub
 
-    Private Sub Guna2Button1_Click_1(sender As Object, e As EventArgs) Handles Guna2Button1.Click
+    Private Sub Guna2Button1_Click_1(sender As Object, e As EventArgs)
         Dim frm4 As New Form4
         frm4.onlineUser = onlineUser
         frm4.userId = userId
         frm4.ShowDialog()
     End Sub
 
+    Private Sub Guna2TileButton1_Click(sender As Object, e As EventArgs) Handles Guna2TileButton1.Click
+        Close()
+        Form1.Close()
+    End Sub
+
+    Private Sub Guna2Panel1_Paint(sender As Object, e As PaintEventArgs) Handles Guna2Panel1.Paint
+
+    End Sub
+
+    Private Sub Guna2Button2_Click(sender As Object, e As EventArgs) Handles Guna2Button2.Click
+        Dim frm5 As New Form5()
+        frm5.onlineUser = onlineUser
+        frm5.userId = userId
+
+        frm5.ShowDialog()
+    End Sub
 End Class
