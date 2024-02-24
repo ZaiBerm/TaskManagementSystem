@@ -92,8 +92,8 @@ Public Class Form4
 
             Using cmd As New MySqlCommand(qry, conn)
 
-                cmd.Parameters.AddWithValue("@Friend", "," + clicked.Parent.Tag)
-                cmd.Parameters.AddWithValue("Username", onlineUser)
+                cmd.Parameters.AddWithValue("@Friend", "," + clicked.Parent.Tag.ToString())
+                cmd.Parameters.AddWithValue("@Username", onlineUser)
 
                 cmd.ExecuteNonQuery()
 
