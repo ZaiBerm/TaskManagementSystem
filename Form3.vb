@@ -11,73 +11,6 @@ Public Class Form3
     Dim connectionString = "server=127.0.0.1; port=3306; database=tms_db; uid=root; password=QZr8408o;"
 
     Private Sub Form3_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        load_form3()
-    End Sub
-
-    Private Sub Guna2TileButton1_Click(sender As Object, e As EventArgs) Handles Guna2TileButton1.Click
-        Close()
-        Form1.Close()
-    End Sub
-
-    Private Sub Guna2Button2_Click(sender As Object, e As EventArgs) Handles Guna2Button2.Click
-        Dim frm5 As New Form5()
-        frm5.onlineUser = onlineUser
-        frm5.userId = userId
-
-        frm5.ShowDialog()
-        reloadPersonalTask()
-    End Sub
-
-    Private Sub Guna2Button1_Click(sender As Object, e As EventArgs) Handles Guna2Button1.Click
-        Dim frm4 As New Form4()
-        frm4.onlineUser = onlineUser
-        frm4.userId = userId
-
-        frm4.ShowDialog()
-        reloadFriends()
-    End Sub
-
-
-
-    Private Sub delete_personal_task(sender As Object, e As EventArgs)
-
-        Dim checkbox As Guna2CustomCheckBox = DirectCast(sender, Guna2CustomCheckBox)
-
-        Using conn As New MySqlConnection(connectionString)
-
-            Dim qry As String = "DELETE FROM personaltask_tbl WHERE TaskID = @TaskID"
-
-            conn.Open()
-
-            Using cmd As New MySqlCommand(qry, conn)
-
-                cmd.Parameters.AddWithValue("@TaskID", Val(checkbox.Parent.Tag))
-
-                cmd.ExecuteNonQuery()
-
-            End Using
-
-            conn.Close()
-
-        End Using
-
-        reloadPersonalTask()
-
-    End Sub
-
-
-
-    Private Sub load_form3()
-
-        reloadFriends()
-        reloadPersonalTask()
-
-    End Sub
-    Private Sub reloadFriends()
-
-        FlowLayoutPanel1.Controls.Clear()
-
-        Dim FriendListNum As New List(Of Integer)
 
         Using conn As New MySqlConnection(connectionString)
 
@@ -111,6 +44,58 @@ Public Class Form3
 
             conn.Close()
 
+        End Using
+
+        loadFriends()
+        loadPersonalTask()
+
+    End Sub
+
+    Private Sub Guna2TileButton1_Click(sender As Object, e As EventArgs) Handles Guna2TileButton1.Click
+        Close()
+        Form1.Close()
+    End Sub
+
+    Private Sub Guna2Button2_Click(sender As Object, e As EventArgs) Handles Guna2Button2.Click
+        Dim frm5 As New Form5()
+        frm5.onlineUser = onlineUser
+        frm5.userId = userId
+
+        frm5.ShowDialog()
+        loadPersonalTask()
+    End Sub
+
+    Private Sub Guna2Button1_Click(sender As Object, e As EventArgs) Handles Guna2Button1.Click
+        Dim frm4 As New Form4()
+        frm4.onlineUser = onlineUser
+        frm4.userId = userId
+
+        frm4.ShowDialog()
+        loadFriends()
+    End Sub
+
+    Private Sub Guna2Button3_Click(sender As Object, e As EventArgs) Handles Guna2Button3.Click
+        Dim frm6 As New Form6()
+        frm6.onlineUser = onlineUser
+        frm6.userId = userId
+
+        Hide()
+        frm6.ShowDialog()
+        Show()
+    End Sub
+
+    Private Sub load_form3()
+        loadFriends()
+        loadPersonalTask()
+    End Sub
+
+    Private Sub loadFriends()
+
+        FlowLayoutPanel1.Controls.Clear()
+
+        Dim FriendListNum As New List(Of Integer)
+
+        Using conn As New MySqlConnection(connectionString)
 
             conn.Open()
 
@@ -195,7 +180,8 @@ Public Class Form3
         End Using
 
     End Sub
-    Private Sub reloadPersonalTask()
+
+    Private Sub loadPersonalTask()
 
         FlowLayoutPanel2.Controls.Clear()
 
@@ -260,5 +246,30 @@ Public Class Form3
 
     End Sub
 
+    Private Sub delete_personal_task(sender As Object, e As EventArgs)
+
+        Dim checkbox As Guna2CustomCheckBox = DirectCast(sender, Guna2CustomCheckBox)
+
+        Using conn As New MySqlConnection(connectionString)
+
+            Dim qry As String = "DELETE FROM personaltask_tbl WHERE TaskID = @TaskID"
+
+            conn.Open()
+
+            Using cmd As New MySqlCommand(qry, conn)
+
+                cmd.Parameters.AddWithValue("@TaskID", Val(checkbox.Parent.Tag))
+
+                cmd.ExecuteNonQuery()
+
+            End Using
+
+            conn.Close()
+
+        End Using
+
+        FlowLayoutPanel2.Controls.RemoveAt(FlowLayoutPanel2.Controls.IndexOf(checkbox.Parent))
+
+    End Sub
 
 End Class
