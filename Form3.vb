@@ -11,6 +11,71 @@ Public Class Form3
     Dim connectionString = "server=127.0.0.1; port=3306; database=tms_db; uid=root; password=QZr8408o;"
 
     Private Sub Form3_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        load_form3()
+    End Sub
+
+    Private Sub Guna2TileButton1_Click(sender As Object, e As EventArgs) Handles Guna2TileButton1.Click
+        Close()
+        Form1.Close()
+    End Sub
+
+    Private Sub Guna2Button2_Click(sender As Object, e As EventArgs) Handles Guna2Button2.Click
+        Dim frm5 As New Form5()
+        frm5.onlineUser = onlineUser
+        frm5.userId = userId
+
+        frm5.ShowDialog()
+        reloadPersonalTask()
+    End Sub
+
+    Private Sub Guna2Button1_Click(sender As Object, e As EventArgs) Handles Guna2Button1.Click
+        Dim frm4 As New Form4()
+        frm4.onlineUser = onlineUser
+        frm4.userId = userId
+
+        frm4.ShowDialog()
+        reloadFriends()
+    End Sub
+
+
+
+    Private Sub delete_personal_task(sender As Object, e As EventArgs)
+
+        Dim checkbox As Guna2CustomCheckBox = DirectCast(sender, Guna2CustomCheckBox)
+
+        Using conn As New MySqlConnection(connectionString)
+
+            Dim qry As String = "DELETE FROM personaltask_tbl WHERE TaskID = @TaskID"
+
+            conn.Open()
+
+            Using cmd As New MySqlCommand(qry, conn)
+
+                cmd.Parameters.AddWithValue("@TaskID", Val(checkbox.Parent.Tag))
+
+                cmd.ExecuteNonQuery()
+
+            End Using
+
+            conn.Close()
+
+        End Using
+
+        reloadPersonalTask()
+
+    End Sub
+
+
+
+    Private Sub load_form3()
+
+        reloadFriends()
+        reloadPersonalTask()
+
+    End Sub
+    Private Sub reloadFriends()
+
+        FlowLayoutPanel1.Controls.Clear()
 
         Dim FriendListNum As New List(Of Integer)
 
@@ -90,11 +155,14 @@ Public Class Form3
 
                     While Reader.Read()
 
-                        Dim pnl As New Panel()
+                        Dim pnl As New Guna2Panel()
                         pnl.Width = 345
                         pnl.Height = 80
-                        pnl.BorderStyle = BorderStyle.FixedSingle
-                        pnl.BackColor = Guna2Panel4.FillColor
+                        pnl.FillColor = Guna2Panel4.FillColor
+                        pnl.BorderRadius = 10
+                        pnl.BorderStyle = Drawing2D.DashStyle.Solid
+                        pnl.BorderColor = Color.DimGray
+                        pnl.BorderThickness = 1
                         pnl.Tag = xfriend
                         FlowLayoutPanel1.Controls.Add(pnl)
 
@@ -124,42 +192,73 @@ Public Class Form3
 
             conn.Close()
 
+        End Using
 
+    End Sub
+    Private Sub reloadPersonalTask()
 
+        FlowLayoutPanel2.Controls.Clear()
+
+        Using con As New MySqlConnection(connectionString)
+
+            Dim qry As String = "SELECT * FROM personaltask_tbl WHERE userID = @userID"
+
+            con.Open()
+
+            Using cmd As New MySqlCommand(qry, con)
+
+                cmd.Parameters.AddWithValue("@userID", userId)
+
+                Dim reader As MySqlDataReader = cmd.ExecuteReader()
+
+                While reader.Read()
+
+                    Dim pnl As New Guna2Panel()
+                    pnl.Width = 431
+                    pnl.Height = 100
+                    pnl.Tag = Val(reader("TaskID"))
+                    pnl.FillColor = Color.White
+                    pnl.BorderRadius = 10
+                    pnl.BorderThickness = 1
+                    pnl.BorderColor = Color.Purple
+                    FlowLayoutPanel2.Controls.Add(pnl)
+
+                    Dim lbl1 As New Label()
+                    lbl1.Text = reader("TaskName").ToString()
+                    lbl1.Font = New Font("Arial Rounded MT Bold", 18, FontStyle.Regular)
+                    lbl1.ForeColor = Color.Purple()
+                    lbl1.Location = New Point(10, 10)
+                    lbl1.Width = 316
+                    lbl1.Height = 60
+                    lbl1.SendToBack()
+                    pnl.Controls.Add(lbl1)
+
+                    Dim lbl2 As New Label()
+                    lbl2.Text = reader("TaskCategory").ToString()
+                    lbl2.Font = New Font("Arial Rounded MT Bold", 16, FontStyle.Regular)
+                    lbl2.ForeColor = Color.Gray()
+                    lbl2.Location = New Point(10, 68)
+                    lbl2.Width = 231
+                    lbl2.Height = 60
+                    lbl2.BringToFront()
+                    pnl.Controls.Add(lbl2)
+
+                    Dim chk As New Guna2CustomCheckBox()
+                    chk.Height = 60
+                    chk.Width = 60
+                    chk.Location = New Point(356, 20)
+                    AddHandler chk.CheckedChanged, AddressOf delete_personal_task
+                    pnl.Controls.Add(chk)
+
+                End While
+
+            End Using
+
+            con.Close()
 
         End Using
 
     End Sub
 
-    Private Sub Guna2Button1_Click_1(sender As Object, e As EventArgs)
-        Dim frm4 As New Form4
-        frm4.onlineUser = onlineUser
-        frm4.userId = userId
-        frm4.ShowDialog()
-    End Sub
 
-    Private Sub Guna2TileButton1_Click(sender As Object, e As EventArgs) Handles Guna2TileButton1.Click
-        Close()
-        Form1.Close()
-    End Sub
-
-    Private Sub Guna2Panel1_Paint(sender As Object, e As PaintEventArgs) Handles Guna2Panel1.Paint
-
-    End Sub
-
-    Private Sub Guna2Button2_Click(sender As Object, e As EventArgs) Handles Guna2Button2.Click
-        Dim frm5 As New Form5()
-        frm5.onlineUser = onlineUser
-        frm5.userId = userId
-
-        frm5.ShowDialog()
-    End Sub
-
-    Private Sub Guna2Button1_Click(sender As Object, e As EventArgs) Handles Guna2Button1.Click
-        Dim frm4 As New Form4()
-        frm4.onlineUser = onlineUser
-        frm4.userId = userId
-
-        frm4.ShowDialog()
-    End Sub
 End Class

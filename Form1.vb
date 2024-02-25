@@ -61,5 +61,7 @@ Public Class Form1
         Else
             Guna2TextBox2.PasswordChar = "*"
         End If
+
     End Sub
+
 End Class

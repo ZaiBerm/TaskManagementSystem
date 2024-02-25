@@ -51,8 +51,8 @@ Partial Class Form4
         Guna2GradientPanel1.BackColor = Color.Transparent
         Guna2GradientPanel1.BorderColor = Color.Transparent
         Guna2GradientPanel1.CustomizableEdges = CustomizableEdges7
-        Guna2GradientPanel1.FillColor = Color.DarkKhaki
-        Guna2GradientPanel1.FillColor2 = Color.Blue
+        Guna2GradientPanel1.FillColor = Color.Black
+        Guna2GradientPanel1.FillColor2 = Color.FromArgb(CByte(64), CByte(0), CByte(64))
         Guna2GradientPanel1.GradientMode = Drawing2D.LinearGradientMode.ForwardDiagonal
         Guna2GradientPanel1.ImeMode = ImeMode.NoControl
         Guna2GradientPanel1.Location = New Point(481, -1)
@@ -106,12 +106,14 @@ Partial Class Form4
         Guna2Button1.DisabledState.CustomBorderColor = Color.DarkGray
         Guna2Button1.DisabledState.FillColor = Color.FromArgb(CByte(169), CByte(169), CByte(169))
         Guna2Button1.DisabledState.ForeColor = Color.FromArgb(CByte(141), CByte(141), CByte(141))
+        Guna2Button1.FillColor = Color.FromArgb(CByte(0), CByte(0), CByte(64))
         Guna2Button1.Font = New Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point)
         Guna2Button1.ForeColor = Color.White
         Guna2Button1.Image = My.Resources.Resources.magnifying_glass_3_xxl
         Guna2Button1.ImageSize = New Size(30, 30)
         Guna2Button1.Location = New Point(37, 92)
         Guna2Button1.Name = "Guna2Button1"
+        Guna2Button1.PressedColor = Color.FromArgb(CByte(40), CByte(0), CByte(40))
         Guna2Button1.ShadowDecoration.CustomizableEdges = CustomizableEdges2
         Guna2Button1.Size = New Size(424, 66)
         Guna2Button1.TabIndex = 10

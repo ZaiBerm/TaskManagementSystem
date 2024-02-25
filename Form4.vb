@@ -9,6 +9,8 @@ Public Class Form4
     Public Property onlineUser As String
     Public Property userId As Integer
 
+    Dim userFriends As New List(Of Integer)
+
     Private Sub Guna2Button1_Click(sender As Object, e As EventArgs) Handles Guna2Button1.Click
 
         FlowLayoutPanel1.Controls.Clear()
@@ -26,6 +28,14 @@ Public Class Form4
                 Dim reader As MySqlDataReader = cmd.ExecuteReader()
 
                 While reader.Read
+
+                    Dim IsFriend As Boolean = False
+
+                    For Each frnd In userFriends
+                        If Val(Guna2TextBox2.Text) = frnd Then
+                            IsFriend = True
+                        End If
+                    Next
 
                     Dim imageData As Byte() = DirectCast(reader("ImageData"), Byte())
                     Dim Img As Image
@@ -59,16 +69,20 @@ Public Class Form4
                         label.AutoSize = True
                         panel.Controls.Add(label)
 
-                        Dim button As New Guna2CircleButton()
-                        button.Width = 65
-                        button.Height = 65
-                        button.FillColor = Color.DarkGray
-                        button.Location = New Point(310, 18)
-                        button.Text = "+"
-                        button.Font = New Font("Arial Rounded MT Bold", 30, FontStyle.Regular)
-                        button.BringToFront()
-                        AddHandler button.Click, AddressOf add_friend
-                        panel.Controls.Add(button)
+                        If Not IsFriend Then
+
+                            Dim button As New Guna2CircleButton()
+                            button.Width = 65
+                            button.Height = 65
+                            button.FillColor = Color.DarkGray
+                            button.Location = New Point(310, 18)
+                            button.Text = "+"
+                            button.Font = New Font("Arial Rounded MT Bold", 30, FontStyle.Regular)
+                            button.BringToFront()
+                            AddHandler button.Click, AddressOf add_friend
+                            panel.Controls.Add(button)
+
+                        End If
 
                     End If
 
@@ -133,5 +147,38 @@ Public Class Form4
 
     Private Sub Form4_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
+        Using conn As New MySqlConnection(connectionString)
+
+            Dim qry As String = "SELECT UserFriends from user_tbl WHERE UID = @UID"
+
+            conn.Open()
+
+            Using cmd As New MySqlCommand(qry, conn)
+
+                cmd.Parameters.AddWithValue("@UID", userId)
+
+                Dim reader As MySqlDataReader = cmd.ExecuteReader()
+
+                While reader.Read()
+
+                    Dim friends As String = reader("UserFriends").ToString()
+                    Dim friendsArray As New List(Of String)(Split(friends, ","))
+                    friendsArray.RemoveAt(0)
+
+                    For Each friends In friendsArray
+
+                        userFriends.Add(Val(friends))
+
+                    Next
+
+                End While
+
+            End Using
+
+            conn.Close()
+
+        End Using
+
     End Sub
+
 End Class
