@@ -4,6 +4,7 @@ Imports MySql.Data.MySqlClient
 Public Class Form6
 
     Dim connectionString = "server=127.0.0.1; port=3306; database=tms_db; uid=root; password=QZr8408o;"
+    Dim groupConnectionString = "server=127.0.0.1; port=3306; database=tms_groups_db; uid=root; password=QZr8408o;"
 
     Public Property onlineUser As String
     Public Property userId As Integer
@@ -114,6 +115,47 @@ Public Class Form6
 
     Private Sub Guna2Button1_Click(sender As Object, e As EventArgs) Handles Guna2Button1.Click
 
+        Using conn As New MySqlConnection(groupConnectionString)
+
+            Dim qry As String = "CREATE TABLE " + Guna2TextBox1.Text + "_task(
+	                                TaskID Int primary key auto_increment,
+                                    AssignedUserID Int Not null,
+                                    TaskName varchar(3000) Not null,
+                                    DueDate DateTime
+                                );"
+
+            conn.Open()
+
+            Using cmd As New MySqlCommand(qry, conn)
+
+                cmd.ExecuteNonQuery()
+
+            End Using
+
+            conn.Close()
+
+        End Using
+
+        Using conn As New MySqlConnection(groupConnectionString)
+
+            Dim qry As String = "CREATE TABLE " + Guna2TextBox1.Text + "_chat(
+                                Message varchar(5000),
+                                UserID int not null,
+                                MessageDate varchar(80) not null
+                            )"
+
+            conn.Open()
+
+            Using cmd As New MySqlCommand(qry, conn)
+
+                cmd.ExecuteNonQuery()
+
+            End Using
+
+            conn.Close()
+
+        End Using
+
         Using conn As New MySqlConnection(connectionString)
 
             Dim qry As String = "INSERT INTO group_tbl (GroupName, GroupOwner, GroupOwnerID, GroupMembers, DateCreated) VALUES
@@ -130,21 +172,40 @@ Public Class Form6
                 cmd.Parameters.AddWithValue("@DateCreated", DateAndTime.Now.ToString("D"))
 
                 cmd.ExecuteNonQuery()
+
             End Using
 
             conn.Close()
-            MessageBox.Show("Group Successfully Created!")
 
         End Using
+
+        MessageBox.Show("Group Successfully Created!")
 
         Close()
 
     End Sub
 
     Private Sub addMember(sender As Object, e As EventArgs)
+
         Dim pressedButton As Guna2CircleButton = DirectCast(sender, Guna2CircleButton)
-        groupMembers.Add(pressedButton.Parent.Tag)
-        FlowLayoutPanel1.Controls.RemoveAt(FlowLayoutPanel1.Controls.IndexOf(pressedButton.Parent))
+
+
+        If pressedButton.Parent.Parent.Name = "FlowLayoutPanel1" Then
+            groupMembers.Add(pressedButton.Parent.Tag)
+            FlowLayoutPanel1.Controls.RemoveAt(FlowLayoutPanel1.Controls.IndexOf(pressedButton.Parent))
+            FlowLayoutPanel2.Controls.Add(pressedButton.Parent)
+            pressedButton.Text = "-"
+        Else
+            groupMembers.RemoveAt(FlowLayoutPanel2.Controls.IndexOf(pressedButton.Parent))
+            FlowLayoutPanel2.Controls.RemoveAt(FlowLayoutPanel2.Controls.IndexOf(pressedButton.Parent))
+            FlowLayoutPanel1.Controls.Add(pressedButton.Parent)
+            pressedButton.Text = "+"
+        End If
+
+
     End Sub
 
+    Private Sub Guna2TileButton1_Click(sender As Object, e As EventArgs) Handles Guna2TileButton1.Click
+        Close()
+    End Sub
 End Class

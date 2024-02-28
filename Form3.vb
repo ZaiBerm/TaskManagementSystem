@@ -2,6 +2,7 @@
 Imports System.IO
 Imports Guna.UI2.WinForms
 Imports MySql.Data.MySqlClient
+Imports Org.BouncyCastle.Tls
 
 Public Class Form3
 
@@ -47,6 +48,7 @@ Public Class Form3
         End Using
 
         loadFriends()
+        loadGroups()
         loadPersonalTask()
 
     End Sub
@@ -209,15 +211,21 @@ Public Class Form3
                     pnl.BorderColor = Color.Purple
                     FlowLayoutPanel2.Controls.Add(pnl)
 
+                    Dim pnl1 As New Panel()
+                    pnl1.Width = 316
+                    pnl1.Height = 60
+                    pnl1.AutoScroll = True
+                    pnl1.Location = New Point(10, 10)
+                    pnl.Controls.Add(pnl1)
+
                     Dim lbl1 As New Label()
                     lbl1.Text = reader("TaskName").ToString()
                     lbl1.Font = New Font("Arial Rounded MT Bold", 18, FontStyle.Regular)
                     lbl1.ForeColor = Color.Purple()
-                    lbl1.Location = New Point(10, 10)
                     lbl1.Width = 316
-                    lbl1.Height = 60
+                    lbl1.AutoSize = True
                     lbl1.SendToBack()
-                    pnl.Controls.Add(lbl1)
+                    pnl1.Controls.Add(lbl1)
 
                     Dim lbl2 As New Label()
                     lbl2.Text = reader("TaskCategory").ToString()
@@ -241,6 +249,98 @@ Public Class Form3
             End Using
 
             con.Close()
+
+        End Using
+
+    End Sub
+
+    Private Sub loadGroups()
+
+        FlowLayoutPanel3.Controls.Clear()
+
+        Dim Groups As New List(Of Integer)
+        Dim GroupOwnerID As New List(Of Integer)
+
+        Using conn As New MySqlConnection(connectionString)
+
+            Dim qry As String = "SELECT GroupOwnerID, GroupID, GroupMembers FROM group_tbl"
+
+            conn.Open()
+
+            Using cmd As New MySqlCommand(qry, conn)
+
+                Dim reader As MySqlDataReader = cmd.ExecuteReader()
+
+                While reader.Read()
+
+                    Dim memberString As String = reader("GroupMembers").ToString
+                    Dim membersArray As New List(Of String)(Split(memberString, ","))
+
+                    For Each member In membersArray
+                        If reader("GroupOwnerID") = userId Then
+                            Groups.Add(Val(reader("GroupID")))
+                            Exit For
+                        ElseIf member = userId Then
+                            Groups.Add(Val(reader("GroupID")))
+                        End If
+                    Next
+
+                End While
+
+                reader.Close()
+
+            End Using
+
+            conn.Close()
+
+        End Using
+
+        Using conn As New MySqlConnection(connectionString)
+
+            Dim qry As String = "SELECT * FROM group_tbl WHERE GroupID = @GroupID"
+
+            conn.Open()
+
+            For Each group In Groups
+
+                Using cmd As New MySqlCommand(qry, conn)
+
+                    cmd.Parameters.AddWithValue("@GroupID", group)
+
+                    Dim reader As MySqlDataReader = cmd.ExecuteReader()
+
+                    While reader.Read()
+
+                        Dim pnl As New Guna2Panel()
+                        pnl.Width = 440
+                        pnl.Height = 80
+                        pnl.FillColor = Guna2Panel4.FillColor
+                        pnl.BorderRadius = 10
+                        pnl.BorderStyle = Drawing2D.DashStyle.Solid
+                        pnl.BorderColor = Color.DimGray
+                        pnl.BorderThickness = 1
+                        pnl.Tag = group
+                        FlowLayoutPanel3.Controls.Add(pnl)
+
+                        Dim name As New Label()
+                        name.Text = reader("GroupName").ToString()
+                        name.Width = 440
+                        name.Height = 80
+                        name.Font = New Font("Arial Rounded MT Bold", 18, FontStyle.Regular)
+                        name.ForeColor = Color.White
+                        name.Location = New Point(10, 21)
+                        AddHandler name.Click, AddressOf open_group
+                        pnl.Controls.Add(name)
+
+                    End While
+
+                    reader.Close()
+
+                End Using
+
+            Next
+
+            conn.Close()
 
         End Using
 
@@ -271,5 +371,19 @@ Public Class Form3
         FlowLayoutPanel2.Controls.RemoveAt(FlowLayoutPanel2.Controls.IndexOf(checkbox.Parent))
 
     End Sub
+
+    Private Sub open_group(sender As Object, e As EventArgs)
+
+        Dim clickedLabel As Label = DirectCast(sender, Label)
+
+        Dim frm7 As New Form7()
+        frm7.userId = userId
+        frm7.onlineUser = onlineUser
+        frm7.groupID = Val(clickedLabel.Parent.Tag)
+        frm7.Show()
+
+    End Sub
+
+
 
 End Class

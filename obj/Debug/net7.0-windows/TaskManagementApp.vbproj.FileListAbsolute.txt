@@ -38,3 +38,4 @@ C:\Users\dell\Desktop\TaskManagementApp\obj\Debug\net7.0-windows\TaskManagementA
 C:\Users\dell\Desktop\TaskManagementApp\obj\Debug\net7.0-windows\TaskManagementApp.Form4.resources
 C:\Users\dell\Desktop\TaskManagementApp\obj\Debug\net7.0-windows\TaskManagementApp.Form5.resources
 C:\Users\dell\Desktop\TaskManagementApp\obj\Debug\net7.0-windows\TaskManagementApp.Form6.resources
+C:\Users\dell\Desktop\TaskManagementApp\obj\Debug\net7.0-windows\TaskManagementApp.Form7.resources

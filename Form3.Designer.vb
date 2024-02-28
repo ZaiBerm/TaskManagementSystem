@@ -260,7 +260,7 @@ Partial Class Form3
         Guna2Button2.FillColor = Color.FromArgb(CByte(64), CByte(64), CByte(64))
         Guna2Button2.Font = New Font("Arial Rounded MT Bold", 16.2F, FontStyle.Regular, GraphicsUnit.Point)
         Guna2Button2.ForeColor = Color.White
-        Guna2Button2.Location = New Point(929, 729)
+        Guna2Button2.Location = New Point(930, 729)
         Guna2Button2.Margin = New Padding(3, 2, 3, 2)
         Guna2Button2.Name = "Guna2Button2"
         Guna2Button2.ShadowDecoration.CustomizableEdges = CustomizableEdges2
